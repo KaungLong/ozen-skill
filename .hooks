@@ -1,0 +1,34 @@
+{
+  "hooks": [
+    {
+      "comment": "防呆：修改檔案時若偵測到 console.log 或 print，發出警告 (支援 Claude Code, Cursor, Antigravity 等跨平台編輯工具)",
+      "matcher": "tool matches '(?i)(Edit|write_to_file|replace_file_content|edit_file|multi_replace_file_content)' && (tool_input.file_path matches '\\\\.(ts|tsx|js|jsx|kt|swift)$' || tool_input.TargetFile matches '\\\\.(ts|tsx|js|jsx|kt|swift)$')",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "#!/bin/bash\nTARGET_PATH=\"${file_path:-$TargetFile}\"\ngrep -n 'console\\.log\\|print(' \"$TARGET_PATH\" && echo '[Hook Warning] 偵測到除錯用的 Log 語句，請在完成任務前將其移除。' >&2 || exit 0"
+        }
+      ]
+    },
+    {
+      "comment": "引導錯誤學習：當測試執行失敗時，強制 Agent 去看 ERROR_JOURNAL (跨平台命終端機令適配)",
+      "matcher": "tool matches '(?i)(Bash|run_command|run_terminal|cmd|execute_shell)' && (tool_input.command matches 'test|jest|xcodetest|gradlew' || tool_input.CommandLine matches 'test|jest|xcodetest|gradlew') && exit_code != 0",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '[Hook Action Required] 測試失敗！在你嘗試修復之前，這可能是一個常見陷阱。你「必須」去閱讀 ERROR_JOURNAL.md 進行比對。' >&2"
+        }
+      ]
+    },
+    {
+      "comment": "Context 溢出預防：追蹤 tool call 次數，超過閾值提醒執行 /ozen checkpoint（靈感來自 learn-claude-code 的三層壓縮策略）",
+      "matcher": "tool matches '(?i)(Edit|write_to_file|replace_file_content|edit_file|multi_replace_file_content|Bash|run_command|run_terminal)'",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "#!/bin/bash\nCOUNTER_FILE=\"/tmp/ozen_tool_call_count\"\nTHRESHOLD=${COMPACT_THRESHOLD:-50}\nREMIND_INTERVAL=25\nCOUNT=$(cat \"$COUNTER_FILE\" 2>/dev/null || echo 0)\nCOUNT=$((COUNT + 1))\necho $COUNT > \"$COUNTER_FILE\"\nif [ $COUNT -eq $THRESHOLD ]; then\n  echo \"[Hook Reminder] ⚠️ 已累計 ${COUNT} 次 tool call。建議執行 /ozen checkpoint 來壓縮 context，避免 AI 遺忘重要資訊。\" >&2\nelif [ $COUNT -gt $THRESHOLD ] && [ $(( (COUNT - THRESHOLD) % REMIND_INTERVAL )) -eq 0 ]; then\n  echo \"[Hook Reminder] ⚠️ 已累計 ${COUNT} 次 tool call（超過閾值 ${THRESHOLD}）。強烈建議執行 /ozen checkpoint。\" >&2\nfi\nexit 0"
+        }
+      ]
+    }
+  ]
+}
