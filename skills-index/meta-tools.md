@@ -5,6 +5,8 @@
 
 | Skill | Path | 描述 |
 |-------|------|------|
+| codexbar-tracker (未安裝) | `Pending` | (KM Reference) 多模型 AI 額度與成本監控 (steipete/CodexBar)，能防止 Context 斷裂與計算 Token 開銷。目前評估為暫不需要，作為 Ozen Team 潛在整合升級備案。 |
+| gitagent-framework (未安裝) | `Pending` | (KM Reference) Git-Native 的開源 AI Agent 標準 (open-gitagent/gitagent)。展示了包含職責分離(SOD)與記憶體(`memory/`)架構等企業級規範，已歸檔作為 Ozen 未來架構升級的參考設計。 |
 | Unknown Skill | `verification-loop/SKILL.md` | No description provided. |
 | async-researcher | `async-researcher/SKILL.md` | Delegates long-running search, web crawling, or background analysis tasks to an asynchronous sub-... |
 | commit-helper | `commit-helper/SKILL.md` | Help create git commits and PRs with properly formatted messages and release notes following Cock... |
