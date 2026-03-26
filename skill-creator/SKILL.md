@@ -207,8 +207,9 @@ Skill creation involves these steps:
 2. Plan reusable skill contents (scripts, references, assets)
 3. Initialize the skill (run init_skill.py)
 4. Edit the skill (implement resources and write SKILL.md)
-5. Package the skill (run package_skill.py)
-6. Iterate based on real usage
+5. Evaluate the skill (Run Evals & Validate Trigger Constraints)
+6. Package the skill (run package_skill.py)
+7. Iterate based on real usage
 
 Follow these steps in order, skipping only if there is a clear reason why they are not applicable.
 
@@ -309,6 +310,7 @@ Write the YAML frontmatter with `name` and `description`:
 - `description`: This is the primary triggering mechanism for your skill, and helps Claude understand when to use the skill.
   - Include both what the Skill does and specific triggers/contexts for when to use it.
   - Include all "when to use" information here - Not in the body. The body is only loaded after triggering, so "When to Use This Skill" sections in the body are not helpful to Claude.
+  - **[CRITICAL: Trigger Tuning]** You must carefully tune this description to avoid False Positives and False Negatives. Before finalizing the description, mentally define at least 3 "True Positives" (prompts that MUST trigger this skill) and 3 "True Negatives" (prompts that look similar but MUST NOT trigger this skill) to ensure the boundaries are robust.
   - Example description for a `docx` skill: "Comprehensive document creation, editing, and analysis with support for tracked changes, comments, formatting preservation, and text extraction. Use when Claude needs to work with professional documents (.docx files) for: (1) Creating new documents, (2) Modifying or editing content, (3) Working with tracked changes, (4) Adding comments, or any other document tasks"
 
 Do not include any other fields in YAML frontmatter.
@@ -317,9 +319,20 @@ Do not include any other fields in YAML frontmatter.
 
 Write instructions for using the skill and its bundled resources.
 
-### Step 5: Packaging a Skill
+### Step 5: Evaluate the Skill (Evals)
 
-Once development of the skill is complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:
+You must verify that the skill holds up to real-world edge cases before packaging it. Follow the **Verification Iron Law**: DO NOT claim a skill is ready until you have verified its execution.
+
+**Evaluation Protocol:**
+1. Generate specific user test prompts (Test Cases).
+2. Execute a simulated role-play: "If a user inputs [Test Case A], does the documentation explicitly provide the steps needed, or are there blind spots?"
+3. Test against the Null Hypothesis: If the skill relies on tools or terminal execution, run those scripts independently first to ensure no silent failures exist. 
+
+If regressions or hallucinations are detected during Eval, return to Step 4 and refine the procedural knowledge. Do not proceed to Packaging until Eval is 100% green.
+
+### Step 6: Packaging a Skill
+
+Once development and Evals are complete, it must be packaged into a distributable .skill file that gets shared with the user. The packaging process automatically validates the skill first to ensure it meets all requirements:
 
 ```bash
 scripts/package_skill.py <path/to/skill-folder>
@@ -344,7 +357,7 @@ The packaging script will:
 
 If validation fails, the script will report the errors and exit without creating a package. Fix any validation errors and run the packaging command again.
 
-### Step 6: Iterate
+### Step 7: Iterate
 
 After testing the skill, users may request improvements. Often this happens right after using the skill, with fresh context of how the skill performed.
 
