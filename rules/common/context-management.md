@@ -14,11 +14,23 @@
 - 當一個角色完成工作，將產出總結寫成文件 (例如：`spec/PRODUCT_REVIEW.md` 或 `spec/build.md`)。
 - 這樣下一個角色接手時，他的 Context 是全新且乾淨的，只需要讀取前一個角色的輸出檔案即可。
 
-## 3. Quality Gates (品質閘門)
+## 3. Quality Gates (品質閘門) 與驗證鐵律
 為了防範「未驗證先宣告完成」的幻覺，每次執行重要任務 (如 Feature 實作或修復) 時，必須遵守 RPI 迴圈與分階段驗證。
-開發者(你) 在宣佈某個 Phase 結束前，必須**主動**輸出一個檢查清單，確認完成自我驗證：
+
+### The Iron Law (驗證鐵律)
+**"NO COMPLETION CLAIMS WITHOUT FRESH VERIFICATION EVIDENCE"**
+(沒有新鮮的驗證證據，就不准宣稱完成)
+
+開發者(你) 在宣佈某個 Phase 結束前，必須**主動**經歷這四個步驟並張貼輸出：
+1. **Identify**: 找出可以證明功能正確的指令 (如 `npm run build`, `npm test`)
+2. **Run**: 實際執行該完整指令
+3. **Read**: 讀取完整的 Stdout 輸出與 Exit code
+4. **Verify & Claim**: 只有在確認輸出無誤後，才允許輸出完成聲明。絕對禁止使用「這應該會正確運作」、「Linter 通過了 (但忘記跑 Test)」等推測性字眼。
+
+### 驗證清單
+在滿足 Iron Law 的前提下，輸出以下自我檢查：
 - [ ] Code Discovery 已執行（已了解舊有依賴與模式）
 - [ ] 所有需求 Deliverables 已實作
-- [ ] Lint 檢查通過
-- [ ] 測試撰寫完畢且執行通過 (Tests pass)
+- [ ] Lint 檢查通過 (需附上執行指令與輸出)
+- [ ] 測試撰寫完畢且執行通過 (需附上執行指令與輸出)
 - [ ] Code Review (如果是架構重要變更，需呼叫 Code Reviewer)
