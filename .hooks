@@ -29,6 +29,16 @@
           "command": "#!/bin/bash\nCOUNTER_FILE=\"/tmp/ozen_tool_call_count\"\nTHRESHOLD=${COMPACT_THRESHOLD:-50}\nREMIND_INTERVAL=25\nCOUNT=$(cat \"$COUNTER_FILE\" 2>/dev/null || echo 0)\nCOUNT=$((COUNT + 1))\necho $COUNT > \"$COUNTER_FILE\"\nif [ $COUNT -eq $THRESHOLD ]; then\n  echo \"[Hook Reminder] ⚠️ 已累計 ${COUNT} 次 tool call。建議執行 /ozen checkpoint 來壓縮 context，避免 AI 遺忘重要資訊。\" >&2\nelif [ $COUNT -gt $THRESHOLD ] && [ $(( (COUNT - THRESHOLD) % REMIND_INTERVAL )) -eq 0 ]; then\n  echo \"[Hook Reminder] ⚠️ 已累計 ${COUNT} 次 tool call（超過閾值 ${THRESHOLD}）。強烈建議執行 /ozen checkpoint。\" >&2\nfi\nexit 0"
         }
       ]
+    },
+    {
+      "comment": "防爆：攔截破壞性指令 (rm -rf, git push -f 等)",
+      "matcher": "tool matches '(?i)(Bash|run_command|run_terminal)' && (tool_input.command matches '(?i)(rm -rf|git push -f|git reset --hard|DROP TABLE|TRUNCATE)' || tool_input.CommandLine matches '(?i)(rm -rf|git push -f|git reset --hard|DROP TABLE|TRUNCATE)')",
+      "hooks": [
+        {
+          "type": "command",
+          "command": "echo '[Hook Warning] 🛑 偵測到高危險破壞性指令！請停止執行並使用 AskUserQuestion 格式向人類確認是否繼續。' >&2 || exit 0"
+        }
+      ]
     }
   ]
 }
