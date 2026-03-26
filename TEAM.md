@@ -20,13 +20,16 @@ graph TB
     end
 
     subgraph "Domain 思維層"
+        PM["👔 產品經理"]
         ARCH["🏗️ 架構師"]
         PLAT["🧩 平台工程師"]
         UI["🎨 UI 工程師"]
+        MKT["🎨 行銷設計師"]
         QA["🧪 QA 工程師"]
         REC["📝 記錄者"]
         CR["🔍 代碼審查員"]
         SEC["🛡️ 安全稽核員"]
+        SAND["🐳 沙箱工程師"]
     end
 
     subgraph "Use Case 流程層"
@@ -37,33 +40,40 @@ graph TB
         W5["status-check"]
         W6["add-skill"]
         W7["triage"]
+        W8["product-review"]
+        W9["cross-model-review"]
+        W10["subagent-exploration"]
     end
 
-    subgraph "Entity 知識庫"
-        SK["通用 skills<br/>(ozen-skill repo)"]
+    subgraph "Entity 知識庫 (分層)"
+        IDX["SKILLS_INDEX.md<br/>(路由表 12 Domain)"]
+        SUB["skills-index/<br/>(子索引 × 12)"]
+        SK["201 個 SKILL.md"]
+        IDX --> SUB --> SK
     end
 
     TRIAGE --> W7
     LIB --> W6
+    PM --> W8
     ARCH --> W1
     PLAT --> W1
     UI --> W2
+    MKT --> W2
     PLAT --> W2
     QA --> W3
     CR --> W3
+    CR --> W9
     SEC --> W3
+    SAND --> W10
     REC --> W2
     REC --> W3
     REC --> W4
     REC --> W5
 
-    W1 --> SK
-    W2 --> SK
-    W3 --> SK
-    W4 --> SK
-    W5 --> SK
-    W6 --> SK
-    W7 --> SK
+    W1 --> IDX
+    W2 --> IDX
+    W3 --> IDX
+    W6 --> IDX
 ```
 
 ---
@@ -112,15 +122,18 @@ platform-engineer.md (通用)
 
 | 角色 | 文件 | 思維模式 |
 |------|------|---------|
+| 👔 產品經理 | `roles/product-manager.md` | 商業價值、UX 審查、需求盲點獵捕 |
 | 🏗️ 架構師 | `roles/architect.md` | 技術選型、模組邊界、依賴方向 |
 | 🧩 平台工程師 | `roles/platform-engineer.md` | Android/iOS/Web 平台適配、跨平台整合 |
 | 🎨 UI 工程師 | `roles/ui-engineer.md` | 設計系統、視覺一致性、動畫 |
+| 🎨 行銷設計師 | `roles/marketing-designer.md` | App Store 截圖、行銷素材、ASO 視覺 |
 | 🧪 QA 工程師 | `roles/qa-engineer.md` | 測試策略、品質把關 |
 | 📝 記錄者 | `roles/recorder.md` | 決策紀錄、context 持久化、錯誤回收 |
 | 🔍 代碼審查員 | `roles/code-reviewer.md` | 架構審查、靜默失敗獵捕、測試缺口分析 |
 | 🛡️ 安全稽核員 | `roles/security-auditor.md` | 唯讀安全盤點、白話文報告、六大防線 |
 | 📚 圖書管理員 | `roles/librarian.md` | 動態技能搜尋、品管過濾、社群套件安裝 |
 | 🔀 分流管理員 | `roles/triage-manager.md` | 模糊輸入結構化、自動分類、工單生成 |
+| 🐳 沙箱工程師 | `roles/sandbox-engineer.md` | 隔離式高風險操作、Docker 沙箱、差異萃取 |
 
 ## 工作流清單
 
@@ -133,3 +146,6 @@ platform-engineer.md (通用)
 | 狀態檢查 | `workflows/status-check.md` | 專案健康度檢查 |
 | 技能搜尋 | `workflows/ozen.md` (`/ozen add-skill`) | 動態社群技能擴充 |
 | 自動分流 | `workflows/ozen.md` (`/ozen triage`) | 模糊需求結構化為標準工單 |
+| 產品審核 | `workflows/product-review.md` | 商業邏輯驗證、UX 摩擦力審查 |
+| 跨模型協作 | `workflows/cross-model-review.md` | 多 AI 模型互審防止 context 退化 |
+| 沙箱探索 | `workflows/subagent-exploration.md` | Context Forking 隔離式除錯 |
