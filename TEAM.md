@@ -94,6 +94,22 @@ flowchart TD
 
 ---
 
+## 語境感知推薦
+
+當對話中偵測到以下語境時，主動建議對應的 `/ozen` 指令：
+
+| 語境訊號 | 推薦指令 |
+|----------|----------|
+| 使用者描述模糊需求或丟問題 | `/ozen triage` |
+| 討論架構決策或技術選型 | `/ozen research` |
+| 提到「測不過」「紅色」「失敗」 | `/ozen fix` |
+| 要求檢查程式碼品質 | `/ozen review` |
+| 提到「上架」「發版」「deploy」 | 建議走 `workflows/release.md` |
+| 問「有沒有 Skill 可以…」 | `/ozen add-skill` |
+| 完成一段較長的開發工作 | `/ozen checkpoint` |
+
+---
+
 ## 錯誤學習機制（分散式）
 
 ```
