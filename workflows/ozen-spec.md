@@ -22,7 +22,7 @@ description: SDD 第一步 — 撰寫 Gherkin 行為規格 + 按需架構設計
 
 3. **架構設計判斷（按需）**
    - 評估 feature 是否滿足以下任一條件：
-     - 需要新的 `expect/actual` 跨平台抽象
+     - 需要新的跨平台抽象層（具體機制查 spec/TECH_SPEC.md）
      - 涉及 ≥2 個模組的交互
      - 引入新依賴或新技術
      - 包含難以用 Gherkin 表達的系統約束（效能、併發、DI 配置）
